@@ -1,0 +1,34 @@
+; This file describe the layout of a jay program
+; It contain a little Hello world example code
+
+; The data section let you preload hardcoded data into memory
+.data:
+
+;	Byte count to load	Memory location		Data
+	0x000E					0x0700					"Hello world!\r\n"
+
+
+; the code section contain the executable code
+;See define.h for all the instructions;
+.code:
+	
+	; Initialize the EAX register as a pointer to the memory
+	SET EAX 0x0700
+	; Initialize the loop stopper for the NEQ
+	SET ECX 0x070E
+	
+loop:
+	; Move the content pointed by EAX to EDX
+	MOV EDX EAX
+	
+	; Display
+	DSP
+
+	; Increment the pointer
+	INC EAX
+	
+	; Jump to "loop" for 0x000E times
+	NEQ EAX ECX
+	JMF loop
+
+	; That's it! Here's a little hello world in 11 JASM lines!
