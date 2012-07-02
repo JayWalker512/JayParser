@@ -15,6 +15,13 @@
 
 #include "instructions.h"
 
+#define HELP_TEXT "Usage: jasm [flags] [IN_FILE] [operation flag] [OUT_FILE]\n\n" \
+				" flags:\n" \
+				" -d	debug mode \n" \
+				" --help	prints this help text\n\n" \
+				" operation flags: \n" \
+				" -o	output binary bytecode file\n" \
+
 char DEBUG = 0;
 
 int parse_args(int argc, const char *argv[]);
@@ -32,6 +39,11 @@ int parse_args(int argc, const char *argv[])
 	for(i = 0;i<argc;i++)
 	{
 		//puts(argv[i]);
+		if (0 == strcmp(argv[i], "--help"))
+		{
+			puts(HELP_TEXT);
+		}
+		
 		if (0 == strcmp(argv[i], "-d"))
 		{
 			DEBUG = 1;
@@ -39,7 +51,7 @@ int parse_args(int argc, const char *argv[])
 		
 		if (0 == strcmp(argv[i], "-o"))
 		{
-			compile_bytecode(argv[i-1], argv[i+1]);
+			return compile_bytecode(argv[i-1], argv[i+1]);
 		}
 	}
 }
@@ -53,9 +65,12 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	std::ofstream output_stream;
 	output_stream.open(output_file, std::ios::out | std::ios::binary);
 	if (output_stream.is_open())
-		puts("Opened output file...");
+		;
 	else
+	{
 		puts("Couldn't open output file!");
+		return 1;
+	}
 		
 	//ifstream
 	if (!input_stream.is_open())
@@ -112,5 +127,6 @@ int compile_bytecode(const char *input_file, const char *output_file)
         }
 	}
 	std::cout << "Output " << outbytes << " bytes." << std::endl;
+	return 0;
 }
 
