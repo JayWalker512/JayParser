@@ -13,7 +13,7 @@
 #include <fstream>
 #include <string.h>
 
-#include "../define.h"
+#include "instructions.h"
 
 int parse_args(int argc, const char *argv[]);
 int compile_bytecode(const char *input_file, const char *output_file);
@@ -40,6 +40,13 @@ int parse_args(int argc, const char *argv[])
 int compile_bytecode(const char *input_file, const char *output_file)
 {
 	std::ifstream input_stream(input_file, std::ios::binary);
+	std::ofstream output_stream;
+	output_stream.open(output_file, std::ios::out | std::ios::binary);
+	if (output_stream.is_open())
+		puts("Opened output file...");
+	else
+		puts("Couldn't open output file!");
+		
 	//ifstream
 	if (!input_stream.is_open())
 	{
@@ -57,15 +64,26 @@ int compile_bytecode(const char *input_file, const char *output_file)
             int i = 0;
             for (i=0;i<line_length;i++)
             {
-                if (in_line[i] == ';')
+                if (in_line[i] == CHAR_COMMENT)
                 {
                     std::cout << "LOG: Found comment line. Skipping...\n";
                     break;
                 }
                 
-                if (0 == strncmp((in_line+i), ".data", 5))
-                    std::cout << "LOG: Matched data section.\n";
-                        
+                if (0 == strncmp((in_line+i), STRING_DATASEC, 5))
+                {
+                    std::cout << "LOG: Matched data section." << std::endl;
+                    //just a test:
+                    output_stream.write(BINARY_DATASEC, sizeof(BINARY_DATASEC) - 1);
+                }
+                
+                if (0 == strncmp((in_line+i), STRING_CODESEC, 5))
+                {
+                    std::cout << "LOG: Matched code section." << std::endl;
+                    //just a test:
+                    output_stream.write(BINARY_CODESEC, sizeof(BINARY_CODESEC) - 1);
+                }
+                    
             }
         }
 }
