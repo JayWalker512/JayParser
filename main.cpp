@@ -14,9 +14,9 @@
 
 #include "VM.h"
 
-int main (int argc, char * const argv[])
+int main (int argc, const char *argv[])
 {
-	Log* log = Log::init();
+	Log *log = Log::init();
 	
 	if (argc != 2)
 		log->add(new Error(FATAL + FILEERR + 1, "Invalid argument count. Expecting program file name."));

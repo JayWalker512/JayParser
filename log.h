@@ -30,7 +30,7 @@ public:
 		}
 	}
 	
-	static Log* init() {		
+	static Log *init() {		
 		if (!sm_instance)
 			sm_instance = new Log();
 		
@@ -40,12 +40,12 @@ public:
 	void displayLastError() { if (m_errors.size()) std::cerr << "Error: " << m_errors.top()->getCode() << std::endl << m_errors.top()->getText() << std::endl; }
 	int getErrorCount()		{ return m_errors.size(); }
 	
-	void add(Error* error)	{ m_errors.push(error); }
+	void add(Error *error)	{ m_errors.push(error); }
 
 private:
 	Log() { }
 	
-	static Log* sm_instance;
+	static Log *sm_instance;
 	
 	std::stack<Error*> m_errors;
 

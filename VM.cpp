@@ -14,7 +14,7 @@
 
 #include "VM.h"
 
-VM::VM(std::ifstream* file) : m_ic(0), m_opc(0), m_op1(0), m_op2(0), m_program(file)
+VM::VM(std::ifstream *file) : m_ic(0), m_opc(0), m_op1(0), m_op2(0), m_program(file)
 {
 	m_log = Log::init();
 	
@@ -45,7 +45,7 @@ void VM::parse()
 
 // Parser
 ////////////////////////////////////////////////////////////////////////////////
-void VM::readNextSection(uint* section)
+void VM::readNextSection(uint *section)
 {
 	char block;
 	m_program->get(block);

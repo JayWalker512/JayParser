@@ -26,19 +26,19 @@ typedef unsigned int uint;
 
 class VM {
 public:
-	VM(std::ifstream* file);
+	VM(std::ifstream *file);
 	~VM();
 
 	void parse();
 	
 // Parser
 private:
-	void readNextSection(uint* section);
+	void readNextSection(uint *section);
 	
 	void readNextInstruction();
 	void skipNextInstruction();
 	
-	void readNextOperator(uint& op);
+	void readNextOperator(uint &op);
 	inline void readNextOp1()			{ readNextOperator(m_op1); }
 	inline void readNextOp2()			{ readNextOperator(m_op2); }
 	inline void readNextOperators()	{ readNextOp1(); readNextOp2(); }
@@ -91,10 +91,10 @@ private:
 	// Virtual memory
 	int m_memory[0xFFFF];
 
-	int* m_eax;
-	int* m_ebx;
-	int* m_ecx;
-	int* m_edx;
+	int *m_eax;
+	int *m_ebx;
+	int *m_ecx;
+	int *m_edx;
 	
 	uint m_ic;
 	uint m_opc;
@@ -103,11 +103,11 @@ private:
 	uint m_op1;
 	uint m_op2;
 	
-	int* m_lgf;
+	int *m_lgf;
 	
 	// System
-	std::ifstream* m_program;
-	Log* m_log;
+	std::ifstream *m_program;
+	Log *m_log;
 
 };
 

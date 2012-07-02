@@ -1,0 +1,4 @@
+#!/bin/bash
+#quick compile script until I get around to writing a Makefil 
+
+g++ main.cpp VM.cpp log.cpp error.cpp -o jayvm
