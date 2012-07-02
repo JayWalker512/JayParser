@@ -15,6 +15,8 @@
 
 #include "instructions.h"
 
+char DEBUG = 0;
+
 int parse_args(int argc, const char *argv[]);
 int compile_bytecode(const char *input_file, const char *output_file);
 
@@ -30,6 +32,11 @@ int parse_args(int argc, const char *argv[])
 	for(i = 0;i<argc;i++)
 	{
 		//puts(argv[i]);
+		if (0 == strcmp(argv[i], "-d"))
+		{
+			DEBUG = 1;
+		}
+		
 		if (0 == strcmp(argv[i], "-o"))
 		{
 			compile_bytecode(argv[i-1], argv[i+1]);
@@ -37,6 +44,9 @@ int parse_args(int argc, const char *argv[])
 	}
 }
 
+/* I'm sure there is a more elegant way to write this type of program, but I'm
+ not particularly experienced with C++ in general, let alone string parsing
+ in C++. Trying my best, can always clean it up later. */
 int compile_bytecode(const char *input_file, const char *output_file)
 {
 	std::ifstream input_stream(input_file, std::ios::binary);
@@ -55,36 +65,52 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	}	
 	
 	printf("Compiling bytecode from %s to %s\n", input_file, output_file);
-        char in_line[256];
-        unsigned int line_length = 0;
-        while (input_stream.getline(in_line, 256))
+    char in_line[256];
+    unsigned int line_length = 0;
+    unsigned int outbytes = 0;
+    while (input_stream.getline(in_line, 256))
+    {
+        line_length = strlen(in_line);
+        
+        if (DEBUG)
+        	std::cout << "LOG: Current line: " << in_line << std::endl;
+        
+        int i = 0;
+        for (i=0;i<line_length;i++)
         {
-            line_length = strlen(in_line);
-            std::cout << "LOG: Current line: " << in_line << std::endl;
-            int i = 0;
-            for (i=0;i<line_length;i++)
+            if (in_line[i] == CHAR_COMMENT)
             {
-                if (in_line[i] == CHAR_COMMENT)
-                {
-                    std::cout << "LOG: Found comment line. Skipping...\n";
-                    break;
-                }
-                
-                if (0 == strncmp((in_line+i), STRING_DATASEC, 5))
-                {
-                    std::cout << "LOG: Matched data section." << std::endl;
-                    //just a test:
-                    output_stream.write(BINARY_DATASEC, sizeof(BINARY_DATASEC) - 1);
-                }
-                
-                if (0 == strncmp((in_line+i), STRING_CODESEC, 5))
-                {
-                    std::cout << "LOG: Matched code section." << std::endl;
-                    //just a test:
-                    output_stream.write(BINARY_CODESEC, sizeof(BINARY_CODESEC) - 1);
-                }
-                    
+            	if (DEBUG)
+                std::cout << "LOG: Found comment line. Skipping...\n";
+                break;
             }
+            
+            int x = 0;
+            for (x=0;x<num_instructions;x++)
+            {
+	            if (0 == strncmp((in_line+i), 
+	            	instructions[x].instruction_str, 
+	            	strlen(instructions[x].instruction_str)))
+	            {
+	            	if (DEBUG)
+	            	{
+			            std::cout << "LOG: Found instruction " \
+			            	<< instructions[x].instruction_str << std::endl;
+			            	
+			            std::cout << "Outbytes: " << strlen(instructions[x].instruction_binary)  << std::endl;
+	                }
+	                outbytes += strlen(instructions[x].instruction_binary);
+	                
+	                //just a test:
+	                output_stream.write(instructions[x].instruction_binary, 
+	                	strlen(instructions[x].instruction_binary) );
+	                	
+	                i += strlen(instructions[x].instruction_str) - 1;
+	                break;
+	            }	         
+            }                    
         }
+	}
+	std::cout << "Output " << outbytes << " bytes." << std::endl;
 }
 
