@@ -22,9 +22,9 @@
 #define EDX 0xFFFC
 
 // Flags
-#define LGF 0xFFF0	// Logical flag, old the result of any logical operation
+#define LGF 0xFFF0	// Logical flag, hold the result of any logical operation
 
-// Any value under 0x0010 is reseved for future upgrades
+// Any value under 0x0010 is reserved for future upgrades
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sections
