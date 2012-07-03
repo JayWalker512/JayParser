@@ -4,7 +4,7 @@
 ; The data section let you preload hardcoded data into memory
 .data:
 
-;	Byte count to load	Memory location		Data
+;	Byte count to load		Memory location			Data
 	0x000E					0x0700					"Hello world!\r\n"
 
 

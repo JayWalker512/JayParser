@@ -9,6 +9,7 @@
  * 
  */
 
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string.h>
@@ -26,9 +27,11 @@ char DEBUG = 0;
 
 int parse_args(int argc, const char *argv[]);
 int compile_bytecode(const char *input_file, const char *output_file);
+unsigned char byte_from_hex_str(const char *hex_string);
 
 int main(int argc, const char *argv[])
 {
+	printf("Value: %u\n", byte_from_hex_str("07"));
 	parse_args(argc, argv);
 	return 0;
 }
@@ -100,6 +103,11 @@ int compile_bytecode(const char *input_file, const char *output_file)
                 break;
             }
             
+            if (in_line[i] == STRING_LOOP_MARKER_SUFFIX)
+            {
+            	std::cout << "LOG: Found loop marker" << std::endl;
+            }
+            
             int x = 0;
             for (x=0;x<num_instructions;x++)
             {
@@ -128,5 +136,32 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	}
 	std::cout << "Output " << outbytes << " bytes." << std::endl;
 	return 0;
+}
+
+/* Returns a byte of value equal to that represented by a 2 character hex
+string. Ex. input of "A4" returns 164. */
+unsigned char byte_from_hex_str(const char *hex_string)
+{
+	unsigned char outbyte = 0;
+	unsigned char value1, value2 = 0;
+	puts(hex_string);
+	
+	if (hex_string[0] >= 48 && hex_string[0] <= 57)
+		value1 = hex_string[0] - 48;
+	else if (hex_string[0] >= 65 && hex_string[0] <= 70)
+		value1 = hex_string[0] - 55;
+		
+	if (hex_string[1] >= 48 && hex_string[1] <= 57)
+		value2 = hex_string[1] - 48;
+	else if (hex_string[1] >= 65 && hex_string[1] <= 70)
+		value2 = hex_string[1] - 55;
+		
+	printf("Val1: %d, Val2: %d\n", value1, value2);
+	
+	outbyte = value1;
+	outbyte = outbyte << 4;
+	outbyte = outbyte + value2;
+	printf("Outbyte: %d\n", outbyte);
+	return outbyte;
 }
 

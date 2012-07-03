@@ -1,13 +1,12 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-//defining string symbols to be parsed from text file input
-
 struct t_instruction {
 	const char instruction_str[16];
 	const char instruction_binary[16];
 };
 
+//defining string symbols to be parsed from text file input
 t_instruction instructions[] = {
 	".data", "\xDD\xFF\xDD\xFF",
 	".code", "\xCC\xFF\xCC\xFF",
@@ -40,39 +39,7 @@ t_instruction instructions[] = {
 	
 int num_instructions = 27;
 
-
 #define CHAR_COMMENT ';'
-#define STRING_LOOP_MARKER_SUFFIX ":"
-
-/*
-#define STRING_EAX "EAX"
-#define STRING_EBX "EBX"
-#define STRING_ECX "ECX"
-#define STRING_EDX "EDX"
-
-#define STRING_LFG "LGF"
-
-#define STRING_DATASEC ".data"
-#define STRING_CODESEC ".code"
-
-#define STRING_ADD "ADD"
-#define STRING_SUB "SUB"
-
-//define binary output symbols
-#define BINARY_DATASEC "\xDD\xFF\xDD\xFF"
-#define BINARY_CODESEC "\xCC\xFF\xCC\xFF"
-
-#define BINARY_NOP "\x00"
-#define BINARY_DSP "\x01"
-
-#define BINARY_MOV "\x02"
-#define BINARY_SET "\x03"
-
-#define BINARY_JMP "\x04"
-#define BINARY_JMF "\x05"
-
-#define BINARY_JMPMK "\x08"
-#define BINARY_RSTLG "\x09"
-*/
+#define STRING_LOOP_MARKER_SUFFIX ':'
 
 #endif
