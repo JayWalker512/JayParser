@@ -1,3 +1,14 @@
+/*
+ *  assembler.cpp
+ *  Jassembler
+ *
+ *  Created by Brandon Foltz on 07-02-2012.
+ *  Copyright 2012 Brandon Foltz.
+ * 
+ *  See LICENSE.txt for license information.
+ * 
+ */
+
 #include <iostream>
 #include <fstream>
 
@@ -8,12 +19,6 @@
 #include "instructions.h"
 #include "assembler.h"
 
-struct t_loop_marker {
-	char string[16];
-};
-
-t_loop_marker loop_markers[0xFFFF];
-unsigned int loop_marks = 0;
 extern char DEBUG;
 
 /* I'm sure there is a more elegant way to write this type of program, but I'm
@@ -24,6 +29,10 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	std::ifstream input_stream(input_file, std::ios::binary);
 	std::ofstream output_stream;
 	output_stream.open(output_file, std::ios::out | std::ios::binary);
+	
+	t_loop_marker loop_markers[0xFFFF];
+	unsigned int loop_marks = 0;
+	
 	if (output_stream.is_open())
 		;
 	else
@@ -32,7 +41,6 @@ int compile_bytecode(const char *input_file, const char *output_file)
 		return 1;
 	}
 		
-	//ifstream
 	if (!input_stream.is_open())
 	{
 		printf("Unable to open %s\n", input_file);
@@ -40,12 +48,13 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	}	
 	
 	printf("Compiling bytecode from %s to %s\n", input_file, output_file);
-    char in_line[256];
+    char in_line[256] = "";
     unsigned int line_length = 0;
     unsigned int outbytes = 0;
-    while (input_stream.getline(in_line, 256))
+    while (input_stream.getline(in_line, 254))
     {
         line_length = strlen(in_line);
+        //printf("Line length: %d\n", line_length);
         
         if (DEBUG)
         	std::cout << "LOG: Current line: " << in_line << std::endl;
@@ -62,11 +71,18 @@ int compile_bytecode(const char *input_file, const char *output_file)
             
             if (in_line[i] == STRING_LOOP_MARKER_SUFFIX)
             {
-            	/*TODO: this should be encapsulated in a function of its own
-            	should also not add whitespace at beginning of line. 
-            	marker name only please.*/
-            	strncpy(loop_markers[loop_marks].string, in_line, i);
-            	loop_marks++;
+            	char the_string[256];
+            	
+            	//puts(in_line);
+            	
+            	
+            	//printf("String addr: %p\n", loop_markers[0].string);
+            	
+            	/*FIXME: ugh this is broken. Struct isnt passing correctly
+            	or something... marker never gets written to the .string member */
+             	loop_marks = add_loop_marker(loop_markers+loop_marks,
+            								loop_marks, 
+            								in_line);
             
             	if (DEBUG)
             	{
@@ -152,4 +168,19 @@ int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string)
 		outbyte_counter++;
 	}
 	return 0;
+}
+
+/* Adds the name of a loop marker to the loop marker index. Processes this from
+marker_string after removing whitespace. Markers can only be made of 
+non-whitespace characters. "Loop_Marker" is valid, "Loop	Marker" is not. */
+int add_loop_marker(t_loop_marker *marker_index, 
+					int marker_count, 
+					const char *marker_string)
+{
+	/* Still needs to search back through the string and start at the first 
+	instance of whitespace or beginning of string. */
+	printf("add_loop_marker recieved: %s\n", marker_string);
+	//printf("String addr: %p\n", marker_index->string);
+	strcpy(marker_index->string, marker_string);
+    return ++marker_count;
 }

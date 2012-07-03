@@ -36,7 +36,6 @@ int parse_args(int argc, const char *argv[])
 	int i = 0;
 	for(i = 0;i<argc;i++)
 	{
-		//puts(argv[i]);
 		if (0 == strcmp(argv[i], "--help"))
 		{
 			puts(HELP_TEXT);

@@ -1,3 +1,14 @@
+/*
+ *  instructions.h
+ *  Jassembler
+ *
+ *  Created by Brandon Foltz on 07-02-2012.
+ *  Copyright 2012 Brandon Foltz.
+ * 
+ *  See LICENSE.txt for license information.
+ * 
+ */
+
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
