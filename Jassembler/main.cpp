@@ -28,10 +28,13 @@ char DEBUG = 0;
 int parse_args(int argc, const char *argv[]);
 int compile_bytecode(const char *input_file, const char *output_file);
 unsigned char byte_from_hex_str(const char *hex_string);
+int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string);
 
 int main(int argc, const char *argv[])
 {
-	printf("Value: %u\n", byte_from_hex_str("07"));
+	unsigned char outbytes[8] = "";
+	bytes_from_hex_string(outbytes, "07A4FFCC");
+	printf("Value: %u, %u, %u, %u\n", outbytes[0], outbytes[1], outbytes[2], outbytes[3]);
 	parse_args(argc, argv);
 	return 0;
 }
@@ -163,5 +166,27 @@ unsigned char byte_from_hex_str(const char *hex_string)
 	outbyte = outbyte + value2;
 	printf("Outbyte: %d\n", outbyte);
 	return outbyte;
+}
+
+/* Writes a string of bytes to out_bytes converted from the hex values in 
+hex_string. hex_string must be a length divisible by 2. Returns value 0 if 
+completed successfully, 1 on error. */
+int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string)
+{
+	if (0 != strlen(hex_string) % 2)
+		return 1; //not divisible by 2!
+		
+	int i = 0;
+	int outbyte_counter = 0;
+	int len = strlen(hex_string);
+	for(i=0;i<len;i+=2)
+	{
+		char hex_string_piece[2] = "";
+		hex_string_piece[0] = *(hex_string+i);
+		hex_string_piece[1] = *(hex_string+(i+1));
+		*(out_bytes+outbyte_counter) = byte_from_hex_str(hex_string_piece);
+		outbyte_counter++;
+	}
+	return 0;
 }
 
