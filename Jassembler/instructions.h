@@ -18,7 +18,7 @@ struct t_instruction {
 };
 
 //defining string symbols to be parsed from text file input
-t_instruction instructions[] = {
+struct t_instruction instructions[] = {
 	".data", "\xDD\xFF\xDD\xFF",
 	".code", "\xCC\xFF\xCC\xFF",
 	"EAX", "\xFF\xFF",

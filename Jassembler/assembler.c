@@ -9,12 +9,9 @@
  * 
  */
 
-#include <iostream>
-#include <fstream>
-
 //C style includes
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "instructions.h"
 #include "assembler.h"
@@ -26,14 +23,18 @@ extern char DEBUG;
  in C++. Trying my best, can always clean it up later. */
 int compile_bytecode(const char *input_file, const char *output_file)
 {
-	std::ifstream input_stream(input_file, std::ios::binary);
-	std::ofstream output_stream;
-	output_stream.open(output_file, std::ios::out | std::ios::binary);
+	//std::ifstream input_stream(input_file, std::ios::binary);
+	//std::ofstream output_stream;
+	//output_stream.open(output_file, std::ios::out | std::ios::binary);
 	
-	t_loop_marker loop_markers[0xFFFF];
+	FILE *input_pointer, *output_pointer;
+	input_pointer = fopen(input_file, "r");
+	output_pointer = fopen(output_file, "w");
+	
+	struct t_loop_marker loop_markers[0xFFFF];
 	unsigned int loop_marks = 0;
 	
-	if (output_stream.is_open())
+	if (output_pointer)
 		;
 	else
 	{
@@ -41,7 +42,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
 		return 1;
 	}
 		
-	if (!input_stream.is_open())
+	if (!input_pointer)
 	{
 		printf("Unable to open %s\n", input_file);
 		return 0;
@@ -51,13 +52,13 @@ int compile_bytecode(const char *input_file, const char *output_file)
     char in_line[256] = "";
     unsigned int line_length = 0;
     unsigned int outbytes = 0;
-    while (input_stream.getline(in_line, 254))
+    while (fgets(in_line, 255, input_pointer))
     {
         line_length = strlen(in_line);
         //printf("Line length: %d\n", line_length);
         
         if (DEBUG)
-        	std::cout << "LOG: Current line: " << in_line << std::endl;
+        	printf("LOG: Current line: %s\n", in_line);
         
         int i = 0;
         for (i=0;i<line_length;i++)
@@ -65,7 +66,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
             if (in_line[i] == CHAR_COMMENT)
             {
             	if (DEBUG)
-                	std::cout << "LOG: Found comment line. Skipping...\n";
+                	printf("LOG: Found comment line. Skipping...\n");
                 break;
             }
             
@@ -86,8 +87,8 @@ int compile_bytecode(const char *input_file, const char *output_file)
             
             	if (DEBUG)
             	{
-            		std::cout << "LOG: Found loop marker" << std::endl;
-            		std::cout << "LOG: " << loop_markers[loop_marks-1].string << " added to index." << std::endl;
+            		printf("LOG: Found loop marker\n");
+            		printf("LOG: %s added to index.\n", loop_markers[loop_marks-1].string);
             	}            	
             }
             
@@ -100,16 +101,16 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	            {
 	            	if (DEBUG)
 	            	{
-			            std::cout << "LOG: Found instruction " \
-			            	<< instructions[x].instruction_str << std::endl;
-			            	
-			            std::cout << "Outbytes: " << strlen(instructions[x].instruction_binary)  << std::endl;
+			            printf("LOG: Found instruction %s\n", instructions[x].instruction_str);			            	
+			            printf("Outbytes: %d\n", (int)strlen(instructions[x].instruction_binary)); 
 	                }
 	                outbytes += strlen(instructions[x].instruction_binary);
 	                
 	                //just a test:
-	                output_stream.write(instructions[x].instruction_binary, 
-	                	strlen(instructions[x].instruction_binary) );
+	                fwrite(instructions[x].instruction_binary, 
+	                	strlen(instructions[x].instruction_binary) - 1,
+	                	strlen(instructions[x].instruction_binary) - 1, 
+	                	output_pointer );
 	                	
 	                i += strlen(instructions[x].instruction_str) - 1;
 	                break;
@@ -117,7 +118,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
             }                    
         }
 	}
-	std::cout << "Output " << outbytes << " bytes." << std::endl;
+	printf("Output %d bytes.\n", outbytes);
 	return 0;
 }
 
@@ -173,7 +174,7 @@ int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string)
 /* Adds the name of a loop marker to the loop marker index. Processes this from
 marker_string after removing whitespace. Markers can only be made of 
 non-whitespace characters. "Loop_Marker" is valid, "Loop	Marker" is not. */
-int add_loop_marker(t_loop_marker *marker_index, 
+int add_loop_marker(struct t_loop_marker *marker_index, 
 					int marker_count, 
 					const char *marker_string)
 {

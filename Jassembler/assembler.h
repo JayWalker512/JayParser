@@ -30,7 +30,7 @@ int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string);
 /* Adds the name of a loop marker to the loop marker index. Processes this from
 marker_string after removing whitespace. Markers can only be made of 
 non-whitespace characters. "Loop_Marker" is valid, "Loop	Marker" is not. */
-int add_loop_marker(t_loop_marker *marker_index, 
+int add_loop_marker(struct t_loop_marker *marker_index, 
 					int marker_count, 
 					const char *marker_string);
 
