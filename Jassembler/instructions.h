@@ -13,8 +13,8 @@
 #define INSTRUCTIONS_H
 
 struct t_instruction {
-	const char instruction_str[16];
-	const char instruction_binary[16];
+	const char string[16];
+	const char binary[16];
 };
 
 //defining string symbols to be parsed from text file input

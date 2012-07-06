@@ -23,13 +23,10 @@ extern char DEBUG;
  in C++. Trying my best, can always clean it up later. */
 int compile_bytecode(const char *input_file, const char *output_file)
 {
-	//std::ifstream input_stream(input_file, std::ios::binary);
-	//std::ofstream output_stream;
-	//output_stream.open(output_file, std::ios::out | std::ios::binary);
-	
 	FILE *input_pointer, *output_pointer;
 	input_pointer = fopen(input_file, "r");
 	output_pointer = fopen(output_file, "w");
+	char output_buffer[0xFFFF] = "";
 	
 	struct t_loop_marker loop_markers[0xFFFF];
 	unsigned int loop_marks = 0;
@@ -74,10 +71,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
             {
             	char the_string[256];
             	
-            	//puts(in_line);
-            	
-            	
-            	//printf("String addr: %p\n", loop_markers[0].string);
+            	//puts(in_line);            	
             	
             	/*FIXME: ugh this is broken. Struct isnt passing correctly
             	or something... marker never gets written to the .string member */
@@ -96,28 +90,34 @@ int compile_bytecode(const char *input_file, const char *output_file)
             for (x=0;x<num_instructions;x++)
             {
 	            if (0 == strncmp((in_line+i), 
-	            	instructions[x].instruction_str, 
-	            	strlen(instructions[x].instruction_str)))
+	            	instructions[x].string, 
+	            	strlen(instructions[x].string)))
 	            {
 	            	if (DEBUG)
 	            	{
-			            printf("LOG: Found instruction %s\n", instructions[x].instruction_str);			            	
-			            printf("Outbytes: %d\n", (int)strlen(instructions[x].instruction_binary)); 
+			            printf("LOG: Found instruction %s\n", instructions[x].string);			            	
+			            printf("Outbytes: %d\n", (int)strlen(instructions[x].binary)); 
 	                }
-	                outbytes += strlen(instructions[x].instruction_binary);
-	                
-	                //just a test:
-	                fwrite(instructions[x].instruction_binary, 
-	                	strlen(instructions[x].instruction_binary) - 1,
-	                	strlen(instructions[x].instruction_binary) - 1, 
-	                	output_pointer );
+	                outbytes += strlen(instructions[x].binary);
 	                	
-	                i += strlen(instructions[x].instruction_str) - 1;
+	               	strncat(output_buffer,
+	               			instructions[x].binary,
+	               			strlen(instructions[x].binary));
+	                	
+	                i += strlen(instructions[x].string) - 1;
 	                break;
 	            }	         
             }                    
         }
 	}
+	//write it to the file!
+    fwrite(output_buffer,
+    	sizeof(char),
+    	strlen(output_buffer), 
+    	output_pointer);
+    	
+    printf("Output buffer size: %d\n", strlen(output_buffer));
+	
 	printf("Output %d bytes.\n", outbytes);
 	return 0;
 }
