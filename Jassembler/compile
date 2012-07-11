@@ -1,4 +1,4 @@
 #!/bin/bash
 
-gcc main.c assembler.c -o jasm
+gcc -g main.c assembler.c -o jasm
 

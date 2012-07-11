@@ -28,12 +28,10 @@ int compile_bytecode(const char *input_file, const char *output_file)
 	output_pointer = fopen(output_file, "w");
 	char output_buffer[0xFFFF] = "";
 	
-	struct t_loop_marker loop_markers[0xFFFF];
+	struct t_loop_marker loop_markers[1024];
 	unsigned int loop_marks = 0;
 	
-	if (output_pointer)
-		;
-	else
+	if(!output_pointer)
 	{
 		puts("Couldn't open output file!");
 		return 1;
@@ -52,7 +50,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
     while (fgets(in_line, 255, input_pointer))
     {
         line_length = strlen(in_line);
-        //printf("Line length: %d\n", line_length);
+        printf("Line length: %d\n", line_length);
         
         if (DEBUG)
         	printf("LOG: Current line: %s\n", in_line);
@@ -69,15 +67,15 @@ int compile_bytecode(const char *input_file, const char *output_file)
             
             if (in_line[i] == STRING_LOOP_MARKER_SUFFIX)
             {
-            	char the_string[256];
-            	
-            	//puts(in_line);            	
-            	
+        		//validate_string(in_line, 25);
+        		
+        		char test_string[16] = "loop:\n\0";
+        		  	
             	/*FIXME: ugh this is broken. Struct isnt passing correctly
             	or something... marker never gets written to the .string member */
              	loop_marks = add_loop_marker(loop_markers+loop_marks,
             								loop_marks, 
-            								in_line);
+            								test_string);
             
             	if (DEBUG)
             	{
@@ -116,7 +114,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
     	strlen(output_buffer), 
     	output_pointer);
     	
-    printf("Output buffer size: %d\n", strlen(output_buffer));
+    printf("Output buffer size: %u\n", strlen(output_buffer));
 	
 	printf("Output %d bytes.\n", outbytes);
 	return 0;
@@ -181,7 +179,76 @@ int add_loop_marker(struct t_loop_marker *marker_index,
 	/* Still needs to search back through the string and start at the first 
 	instance of whitespace or beginning of string. */
 	printf("add_loop_marker recieved: %s\n", marker_string);
-	//printf("String addr: %p\n", marker_index->string);
+	
+	/*char processed_loop_marker[16] = "";
+	int i = 0;
+	int start_char = 0;
+	
+	strcpy(processed_loop_marker, marker_string);
+	for (i=strlen(processed_loop_marker);i>0;i--)
+	{
+		if (processed_loop_marker[i] == '\n')
+			processed_loop_marker[i] = '\0';
+		if (processed_loop_marker[i] = ':')
+			processed_loop_marker[i] = '\0';
+		if (processed_loop_marker[i] == '\t' ||
+			processed_loop_marker[i] == ' ')
+		{
+			start_char = i;
+			break;
+		}
+	}*/
+	
+	//strcpy(marker_index->string, processed_loop_marker[start_char]);
+	
+	//ORIGINAL LINE FOR TESTING
 	strcpy(marker_index->string, marker_string);
     return ++marker_count;
+}
+
+void strip_loop_marker_string(const char *stripped_string, const char *orig_string)
+{
+	int colonpos, marker_start_pos = 0;
+	int i = 0;
+	
+	//first, find the colon
+	for (i=0; i<strlen(orig_string); i++)
+	{
+		if ( *(orig_string+i) == ':' )
+		{
+			colonpos = i;
+			break;
+		}
+	}
+	
+	//now find the first whitespace char before the loop marker text
+	for (i=colonpos; i>0; i--)
+	{
+		if ( *(orig_string+i) == ' ' ||
+			 *(orig_string+i) == '\n' ||
+			 *(orig_string+i) == '\t' ||
+			 *(orig_string+i) == '\r' )
+		{
+			marker_start_pos = i+1;
+			break;
+		}
+	}
+	
+	//debug
+	printf("Marker start pos: %d\n Colon pos: %d\n", marker_start_pos, colonpos);
+	
+	//now return it!
+	strncpy(stripped_string, orig_string+marker_start_pos, colonpos-marker_start_pos);
+}
+
+void validate_string(const char *in_string, int len)
+{
+	int i = 0;
+	for(i=0;i<len;i++)
+	{
+		if (*(in_string+i) == NULL)
+			printf("Found NULL at %d\n", i);
+		else if (*(in_string+i) == '\n')
+			printf("Found newline at %d\n", i);
+	}
 }
