@@ -26,13 +26,8 @@ char DEBUG = 0;
 int parse_args(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[])
-{
-	char thisshit[32] = "";
-	char thatshit[32] = "\n\t  somechar:  \n\0";
-	strip_loop_marker_string(thisshit, thatshit);
-	puts(thisshit);
-	
-	//parse_args(argc, argv);
+{	
+	parse_args(argc, argv);
 	return 0;
 }
 

@@ -12,8 +12,11 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
+#define MAX_LOOP_MARKER_STRING_LENGTH 64
+#define MAX_LOOP_MARKERS 4096
+
 struct t_loop_marker {
-	char string[64];
+	char string[MAX_LOOP_MARKER_STRING_LENGTH];
 };
 
 int compile_bytecode(const char *input_file, const char *output_file);
@@ -31,7 +34,7 @@ int bytes_from_hex_string(unsigned char *out_bytes, const char *hex_string);
 marker_string after removing whitespace. Markers can only be made of 
 non-whitespace characters. "Loop_Marker" is valid, "Loop	Marker" is not. */
 int add_loop_marker(struct t_loop_marker *marker_index, 
-					int marker_count, 
+					int *marker_count, 
 					const char *marker_string);
 					
 /* Strips whitespace and newline characters from after the loop-marker ":" 
@@ -39,7 +42,7 @@ character, and strips characters to the left of the last whitespace character
 before the loop marker (since loop markers cannot contain whitespace). So for 
 example orig_string contains "   bla nope thisloop:   " then stripped_string
 will return "thisloop". */
-void strip_loop_marker_string(const char *stripped_string, const char *orig_string);
+void strip_loop_marker_string(char *stripped_string, const char *orig_string);
 					
 /* Prints some debug info about the given string. Length, how many (and where)
 null bytes and newlines are. */

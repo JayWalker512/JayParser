@@ -50,7 +50,8 @@ struct t_instruction instructions[] = {
 	
 int num_instructions = 27;
 
-#define CHAR_COMMENT ';'
-#define STRING_LOOP_MARKER_SUFFIX ':'
+#define COMMENT_PREFIX ';'
+#define LOOP_MARKER_SUFFIX ':'
+#define HEX_STRING_PREFIX "0x"
 
 #endif
