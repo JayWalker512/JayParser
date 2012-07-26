@@ -1,5 +1,5 @@
 /*
- *  main.cpp
+ *  main.c
  *  Jassembler
  *
  *  Created by Brandon Foltz on 07-02-2012.
