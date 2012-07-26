@@ -43,6 +43,12 @@ before the loop marker (since loop markers cannot contain whitespace). So for
 example orig_string contains "   bla nope thisloop:   " then stripped_string
 will return "thisloop". */
 void strip_loop_marker_string(char *stripped_string, const char *orig_string);
+
+/* Checks if a particular loop marker string already exists within the index.
+ Returns 1 if yes, 0 if no. */
+int loop_marker_exists(struct t_loop_marker *marker_index, 
+						int marker_count,
+						const char *marker_string);
 					
 /* Prints some debug info about the given string. Length, how many (and where)
 null bytes and newlines are. */

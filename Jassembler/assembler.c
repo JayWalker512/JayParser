@@ -1,5 +1,5 @@
 /*
- *  assembler.cpp
+ *  assembler.c
  *  Jassembler
  *
  *  Created by Brandon Foltz on 07-02-2012.
@@ -9,7 +9,6 @@
  * 
  */
 
-//C style includes
 #include <stdio.h>
 #include <string.h>
 
@@ -66,7 +65,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
 
 			if (in_line[i] == LOOP_MARKER_SUFFIX)
 			{	
-				int loop_marker_ret = 0;
+				int loop_marker_ret = 0; //only for debugging purposes
 				loop_marker_ret = add_loop_marker(loop_markers+loop_marks,
 											&loop_marks, 
 											in_line);
@@ -107,6 +106,7 @@ int compile_bytecode(const char *input_file, const char *output_file)
 			}                    
 		}
     }
+	
     //write it to the file!
     fwrite(output_buffer,
 	sizeof(char),
@@ -231,6 +231,22 @@ void strip_loop_marker_string(char *stripped_string, const char *orig_string)
     //append null-terminator
     //*(stripped_string+( (colonpos+1)-marker_start_pos) ) = '\0';
     printf("Stripped length: %d\n", (int)strlen(stripped_string));
+}
+
+int loop_marker_exists(struct t_loop_marker *marker_index, 
+						int marker_count,
+						const char *marker_string)
+{
+	/*puts((marker_index+0)->string);
+	puts((marker_index+1)->string);*/
+	
+	int i = 0;
+	for (i=0;i<marker_count;i++)
+	{
+		if (0 == strcmp((marker_index+i)->string, marker_string))
+			return 1; //found a match!
+	}
+	return 0; //no matches!
 }
 
 void validate_string(const char *in_string, int len)
