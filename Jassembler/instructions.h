@@ -53,5 +53,7 @@ int num_instructions = 27;
 #define COMMENT_PREFIX ';'
 #define LOOP_MARKER_SUFFIX ':'
 #define HEX_STRING_PREFIX "0x"
+#define DATA_SEGMENT_MARKER ".data:"
+#define CODE_SEGMENT_MARKER ".code:"
 
 #endif

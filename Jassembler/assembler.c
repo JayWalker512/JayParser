@@ -65,21 +65,19 @@ int compile_bytecode(const char *input_file, const char *output_file)
 
 			if (in_line[i] == LOOP_MARKER_SUFFIX)
 			{	
-				int loop_marker_ret = 0; //only for debugging purposes
-				loop_marker_ret = add_loop_marker(loop_markers+loop_marks,
-											&loop_marks, 
-											in_line);
-
-				if (DEBUG)
+				/*TODO: need a way of handling :'s that are typed inside quotes
+				 as in a string in the data segment so they aren't mistaken for
+				 loop markers. */
+				char manip_string[256] = "";
+				strip_loop_marker_string(manip_string, in_line);
+				if (!loop_marker_exists(loop_markers, loop_marks, manip_string))
 				{
-					printf("LOG: Found loop marker\n");
-					//printf("78 Length: %d\n", strlen(loop_markers[--loop_marks].string));
-					if (loop_marker_ret == 1)
+					add_loop_marker(loop_markers+loop_marks,
+									&loop_marks, 
+									manip_string);
+					if (DEBUG)
 						printf("LOG: %s added to index.\n", loop_markers[loop_marks-1].string);
-					else
-						puts("Invalid marker!");
-
-				}            	
+				}
 			}
 
 			int x = 0;
@@ -175,17 +173,15 @@ int add_loop_marker(struct t_loop_marker *marker_index,
 					int *marker_count, 
 					const char *marker_string)
 {
-    char final_loop_marker[64] = "";
-    strip_loop_marker_string(final_loop_marker, marker_string);
     
-    if (0 == strcmp(final_loop_marker, ".data:") ||
-    	0 == strcmp(final_loop_marker, ".code:") )
+    if (0 == strcmp(marker_string, DATA_SEGMENT_MARKER) ||
+    	0 == strcmp(marker_string, CODE_SEGMENT_MARKER) )
     {
     	return 0;
     }
 	
     //ORIGINAL LINE FOR TESTING
-    strcpy(marker_index->string, final_loop_marker);
+    strcpy(marker_index->string, marker_string);
     
     ++*marker_count; /*this seems counterintuitive considering what happens on
     line 71 and 81*/
